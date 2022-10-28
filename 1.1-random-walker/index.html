@@ -7,5 +7,31 @@
   <body>
     <main>
     </main>
+    <form>
+      <fieldset>
+        <legend>Select a walking mode:</legend>
+
+        <div>
+          <input type="radio" id="random" name="mode" value="random" onclick="onRadioButtonClicked(this)"
+                checked>
+          <label for="random">Random</label>
+        </div>
+
+        <div>
+          <input type="radio" id="improvedRandom" name="mode" value="improvedRandom" onclick="onRadioButtonClicked(this)">
+          <label for="improvedRandom">Improved Random</label>
+        </div>
+
+        <div>
+          <input type="radio" id="skewedRight" name="mode" value="skewedRight" onclick="onRadioButtonClicked(this)">
+          <label for="skewedRight">Skewed Right</label>
+        </div>
+
+        <div>
+          <input type="radio" id="skewedLeft" name="mode" value="skewedLeft" onclick="onRadioButtonClicked(this)">
+          <label for="skewedLeft">Skewed Left</label>
+        </div>
+      </fieldset>
+    </form>
   </body>
 </html>
