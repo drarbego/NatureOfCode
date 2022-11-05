@@ -1,59 +1,60 @@
-const SIZE_X = 200;
-const SIZE_Y = 200;
+const SIZE_X = 640;
+const SIZE_Y = 320;
 const STEP_SIZE = 20;
 
-class Walker {
-    constructor(x, y, stepSize) { 
-        this.x = x;
-        this.y = y;
-        this.stepSize = stepSize;
+const MAX_COLOR = 255;
+const MIN_COLOR = 30;
+let origin;
 
-        let v = this._getRandomStepVector();
-        this.newX = v.x;
-        this.newY = v.y;
+class Walker {
+    constructor(x, y, maxStepSize) { 
+        this.pos = createVector(x, y);
+        let dir = this._getRandomStepVector();
+        this.nextPos = p5.Vector.add(this.pos, dir);
+
+        this.maxStepSize = maxStepSize;
+        this.color = this._getColorFromStep(dir);
     }
 
     display() {
-        stroke(255);
+        stroke(this.color);
 
-        line(this.x, this.y, this.newX, this.newY);
+        line(this.pos.x, this.pos.y, this.nextPos.x, this.nextPos.y);
     }
 
     step() {
-        this.x = this.newX;
-        this.y = this.newY;
+        this.pos = this.nextPos;
 
-        let v = this._outsideScreen() ? this._getVectorToOrigin() : this._getRandomStepVector();
+        let dir = this._isOutsideScreen() ? this._getVectorToOrigin() : this._getRandomStepVector();
+        this.nextPos = p5.Vector.add(this.pos, dir);
 
-        this.newX = v.x;
-        this.newY = v.y;
+        this.color = this._getColorFromStep(dir);
+    }
+
+    _getColorFromStep(dir) {
+        // the longer the step the darker it is displayed
+        const diff = MAX_COLOR - MIN_COLOR;
+        return MIN_COLOR + (diff - ((dir.mag() / STEP_SIZE) * diff));
     }
 
     _getVectorToOrigin() {
-        let pos = createVector(this.x, this.y);
-        let origin = createVector(SIZE_X/2, SIZE_Y/2);
-        let dir = p5.Vector.sub(origin, pos);
+        let dir = p5.Vector.sub(origin, this.pos);
 
-        let stepSize = this._monteCarlo() * this.stepSize;
+        let stepSize = this._monteCarlo() * this.maxStepSize;
         dir.normalize();
         dir.mult(stepSize)
-
-        console.log(pos);
-        console.log(dir);
-        console.log(origin);
 
         return dir;
     }
 
     _getRandomStepVector() {
-        let v = createVector(this.x, this.y);
         let dir = createVector(random(-1, 1), random(-1, 1));
 
-        let stepSize = this._monteCarlo() * this.stepSize;
+        let stepSize = this._monteCarlo() * this.maxStepSize;
         dir.normalize();
         dir.mult(stepSize);
 
-        return p5.Vector.add(v, dir);
+        return dir
     }
 
     _monteCarlo() {
@@ -72,12 +73,12 @@ class Walker {
         return num;
     }
 
-    _outsideScreen() {
+    _isOutsideScreen() {
         return (
-            this.x < 0 ||
-            this.x > SIZE_X ||
-            this.y < 0 ||
-            this.y > SIZE_Y
+            this.pos.x < 0 ||
+            this.pos.x > SIZE_X ||
+            this.pos.y < 0 ||
+            this.pos.y > SIZE_Y
         );
     }
 }
@@ -87,7 +88,8 @@ let walker;
 function setup() {
     createCanvas(SIZE_X, SIZE_Y);
     background(0);
-    walker = new Walker(SIZE_X/2, SIZE_Y/2, STEP_SIZE);
+    origin = createVector(SIZE_X/2, SIZE_Y/2);
+    walker = new Walker(origin.x, origin.y, STEP_SIZE);
 }
   
 function draw() {
