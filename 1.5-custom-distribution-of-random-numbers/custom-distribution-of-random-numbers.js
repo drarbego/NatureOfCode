@@ -1,37 +1,41 @@
-const STEP_SIZE = 1;
-let walker = null;
+const SIZE_X = 640;
+const SIZE_Y = 320;
 
 class Walker {
     constructor(x, y) { 
         this.x = x;
         this.y = y;
+        this.newX = null;
+        this.newY = null;
         this.currentMode = "random";
-    }
-
-    setMode(newMode) {
-        this.currentMode = newMode;
     }
 
     display() {
         stroke(0);
+
         point(this.x, this.y);
     }
 
     step() {
-        switch(this.currentMode) {
-            case "random":
-                this.randomStep();
-                break;
-            case "improvedRandom":
-                this.improvedRandomStep();
-                break;
-            case "skewedRight":
-                this.stepSkewedRight();
-                break;
-            case "skewedLeft":
-                this.stepSkewedLeft();
-                break;
+        this.x = this.newX;
+        this.y = this.newY;
+        let stepSize = this.monteCarlo() * 20; // 20 is max step size
+    }
+
+    monteCarlo() {
+        let num = random();
+        let qualifier = random();
+        // qualification probability is relative to the picked number
+        // a higher number has higher chance of being picked
+        let probability = num;
+
+        while(qualifier >= probability) {
+            num = random();
+            qualifier = random();
+            if(qualifier < probability) return num;
         }
+
+        return num;
     }
 
     randomStep() {
@@ -78,18 +82,10 @@ class Walker {
 }
 
 function setup() {
-    createCanvas(400, 400);
-    background(220);
-    walker = new Walker(width/2, height/2);
+    createCanvas(SIZE_X, SIZE_Y);
+    background(0);
 }
   
 function draw() {
-    walker.display();
-    walker.step();
 }
 
-function onRadioButtonClicked(element) {
-    console.log(element.value);
-    walker.setMode(element.value);
-    console.log(walker.currentMode);
-}

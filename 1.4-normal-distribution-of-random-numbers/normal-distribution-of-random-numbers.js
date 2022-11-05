@@ -1,5 +1,6 @@
 const SIZE_X = 640;
 const SIZE_Y = 320;
+let sd = 120;
 let origin;
 let maxDist;
 
@@ -16,7 +17,6 @@ function draw() {
 
 function drawEllipsesInX() {
     let num = randomGaussian();
-    let sd = 60;
     let mean = origin.x;
     let x = sd * num + mean;
 
@@ -26,7 +26,6 @@ function drawEllipsesInX() {
 }
 
 function drawRandomSplatDots() {
-    let sd = 60;
     let xMean = origin.x;
     let yMean = origin.y;
 
